@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Emgu.CV;
+using Emgu.Util;
+using Microsoft.Win32;
 
 namespace SimpleFilter2
 {
@@ -23,6 +26,22 @@ namespace SimpleFilter2
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void FileOpen_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.InitialDirectory = "c:\\"; // 기본경로
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.Filter = "Image files (*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Mat img = CvInvoke.Imread(openFileDialog.FileName, Emgu.CV.CvEnum.LoadImageType.AnyColor);
+                image.Source = BitmapSourceConvert.ToBitmapSource(img);
+            }
+
         }
     }
 }

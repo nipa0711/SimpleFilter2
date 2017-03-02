@@ -5,8 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleFilter2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Simple Filter 2" Height="350" Width="600">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="450*" />
+            <ColumnDefinition Width="150*" />
+        </Grid.ColumnDefinitions>
+        <Menu HorizontalAlignment="Left" VerticalAlignment="Top">
+            <MenuItem Header="파일">
+                <MenuItem x:Name="FileOpen" Header="열기" Click="FileOpen_Click"></MenuItem>
+                <MenuItem x:Name="FileSave" Header="저장" IsEnabled="False"/>
+                <MenuItem x:Name="FileSaveAs" Header="다른 이름으로 저장" IsEnabled="False"></MenuItem>
+                <Separator HorizontalAlignment="Left" Width="190"/>
+                <MenuItem x:Name="ProgramEnd" Header="끝내기"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="돌리기">
+                <MenuItem x:Name="rotate90" Header="우측으로 돌리기"></MenuItem>
+                <MenuItem x:Name="rotate270" Header="좌측으로 돌리기"></MenuItem>
+                <MenuItem x:Name="rotate180" Header="거꾸로 돌리기"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Image x:Name="image" Grid.Row="1" Grid.RowSpan="4"/>
+        <Label x:Name="label" Content="히스토그램" Grid.Row="1" Grid.Column="1"/>
+        <Image x:Name="histogram" Grid.Row="2" Grid.Column="1"/>
+        <Label x:Name="label2" Content="필터 리스트" Grid.Row="3" Grid.Column="1"/>
+        <ListBox x:Name="filterListBox" Grid.Row="4" Grid.Column="1" />
     </Grid>
 </Window>
