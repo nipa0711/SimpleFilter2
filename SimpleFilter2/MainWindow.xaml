@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleFilter2"
         mc:Ignorable="d"
-        Title="Simple Filter 2" Height="350" Width="600">
+        Title="Simple Filter 2" Height="350" Width="600" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,12 +22,35 @@
                 <MenuItem x:Name="FileSave" Header="저장" IsEnabled="False"/>
                 <MenuItem x:Name="FileSaveAs" Header="다른 이름으로 저장" IsEnabled="False"></MenuItem>
                 <Separator HorizontalAlignment="Left" Width="190"/>
-                <MenuItem x:Name="ProgramEnd" Header="끝내기"></MenuItem>
+                <MenuItem x:Name="ProgramEnd" Header="끝내기" Click="ProgramEnd_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="돌리기">
-                <MenuItem x:Name="rotate90" Header="우측으로 돌리기"></MenuItem>
-                <MenuItem x:Name="rotate270" Header="좌측으로 돌리기"></MenuItem>
-                <MenuItem x:Name="rotate180" Header="거꾸로 돌리기"></MenuItem>
+                <MenuItem x:Name="rotate90" Header="우측으로 돌리기" Click="rotate90_Click"></MenuItem>
+                <MenuItem x:Name="rotate270" Header="좌측으로 돌리기" Click="rotate270_Click"></MenuItem>
+                <MenuItem x:Name="rotate180" Header="거꾸로 돌리기" Click="rotate180_Click"></MenuItem>
+                <Separator HorizontalAlignment="Left" Width="190"/>
+                <MenuItem x:Name="toFlipLR" Header="좌우대칭" Click="toFlipLR_Click"></MenuItem>
+                <MenuItem x:Name="toFlipUD" Header="상하대칭" Click="toFlipUD_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="필터">
+                <MenuItem x:Name="viewOriginal" Header="원본으로 되돌리기" Click="viewOriginal_Click"></MenuItem>
+                <Separator HorizontalAlignment="Left" Width="190"/>
+                <MenuItem x:Name="viewGray" Header="흑백영상 만들기" Click="viewGray_Click"></MenuItem>
+                <MenuItem x:Name="toSepia" Header="세피아"></MenuItem>
+                <MenuItem Header="블러">
+                    <MenuItem x:Name="toSobel" Header="Sobel"></MenuItem>
+                    <MenuItem x:Name="toLaplace" Header="Laplace"></MenuItem>
+                    <MenuItem x:Name="toMedian" Header="Median"></MenuItem>
+                    <MenuItem x:Name="toGaussian" Header="Gaussian"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="히스토그램 균등화">
+                    <MenuItem x:Name="BgrEqualization" Header="색상에 대한 균등화" Click="BgrEqualization_Click"></MenuItem>
+                    <MenuItem x:Name="YCrCbEqulization" Header="밝기에 대한 균등화" Click="YCrCbEqulization_Click" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveBrightnessEqualization" Header="Adaptive Brightness Equalization" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveBgrEqualization" Header="Adaptive BGR Equalization" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveYCrCbEqualization" Header="Adaptive YCrCb Equalization" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveSaturationEqualization" Header="Adaptive Saturation Equalization" ></MenuItem>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <GroupBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="4" BorderThickness="0">

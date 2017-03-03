@@ -32,6 +32,8 @@ namespace SimpleFilter2
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private System.Windows.Media.PointCollection GrayHistogramPoints = null;
+        Mat OriginalMat = null;
+        Mat CurrentMat = null;
 
         public MainWindow()
         {
@@ -48,21 +50,30 @@ namespace SimpleFilter2
             openFileDialog.Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp;*.tif)|*.jpg;*.jpeg;*.png;*.bmp;*.tif";
 
             if (openFileDialog.ShowDialog() == true)
-            {               
+            {
                 Mat img = CvInvoke.Imread(openFileDialog.FileName, Emgu.CV.CvEnum.LoadImageType.AnyColor);
-                image.Source = BitmapSourceConvert.ToBitmapSource(img);
-                
-                drawHistogram(img);
+                OriginalMat = img;
+                CurrentMat = OriginalMat.Clone();
+                toOriginal();
             }
         }
 
-        private void drawHistogram(Mat img)
+        internal void drawHistogram(Mat img)
         {
             using (System.Drawing.Bitmap bmp = img.Bitmap)
             {
-                // Luminance
-                ImageStatisticsHSL Statistics = new ImageStatisticsHSL(bmp);
-                this.LuminanceHistogramPoints = ConvertToPointCollection(Statistics.Luminance.Values);
+                ImageStatistics Statistics = new ImageStatistics(bmp);
+
+                if (Statistics.IsGrayscale == true) // 회색이라면
+                {
+                    this.LuminanceHistogramPoints = ConvertToPointCollection(Statistics.Gray.Values);
+                }
+                else
+                {
+                    // Luminance
+                    ImageStatisticsHSL LStatistics = new ImageStatisticsHSL(bmp);
+                    this.LuminanceHistogramPoints = ConvertToPointCollection(LStatistics.Luminance.Values);
+                }
             }
         }
 
@@ -85,7 +96,7 @@ namespace SimpleFilter2
             }
         }
 
-        private System.Windows.Media.PointCollection ConvertToPointCollection(int[] values)
+        internal System.Windows.Media.PointCollection ConvertToPointCollection(int[] values)
         {
             int max = values.Max();
 
@@ -101,6 +112,76 @@ namespace SimpleFilter2
             points.Add(new Point(values.Length - 1, max));
 
             return points;
+        }
+
+        private void viewOriginal_Click(object sender, RoutedEventArgs e)
+        {
+            toOriginal();
+        }
+
+        private void viewGray_Click(object sender, RoutedEventArgs e)
+        {
+            toGray(CurrentMat);
+        }
+
+        private void showImg(Mat img)
+        {
+            image.Source = BitmapSourceConvert.ToBitmapSource(img);
+            drawHistogram(img);
+        }
+
+        private void toFlipLR_Click(object sender, RoutedEventArgs e)
+        {
+            flipImage(CurrentMat, 1);
+        }
+
+        private void toFlipUD_Click(object sender, RoutedEventArgs e)
+        {
+            flipImage(CurrentMat, 2);
+        }
+
+        private void rotate90_Click(object sender, RoutedEventArgs e)
+        {
+            rotateImage(CurrentMat, 1);
+        }
+
+        private void rotate270_Click(object sender, RoutedEventArgs e)
+        {
+            rotateImage(CurrentMat, 2);
+        }
+
+        private void rotate180_Click(object sender, RoutedEventArgs e)
+        {
+            rotateImage(CurrentMat, 3);
+        }
+
+        private void ProgramEnd_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            var response = MessageBox.Show("정말로 종료하시겠습니까?", "종료 안내", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+
+            if (response == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void BgrEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrHistogramEqulization(CurrentMat);
+        }
+
+        private void YCrCbEqulization_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
