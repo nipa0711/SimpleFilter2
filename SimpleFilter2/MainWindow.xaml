@@ -9,9 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="200*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -32,10 +30,20 @@
                 <MenuItem x:Name="rotate180" Header="거꾸로 돌리기"></MenuItem>
             </MenuItem>
         </Menu>
-        <Image x:Name="image" Grid.Row="1" Grid.RowSpan="4"/>
-        <Label x:Name="label" Content="히스토그램" Grid.Row="1" Grid.Column="1"/>
-        <Image x:Name="histogram" Grid.Row="2" Grid.Column="1"/>
-        <Label x:Name="label2" Content="필터 리스트" Grid.Row="3" Grid.Column="1"/>
-        <ListBox x:Name="filterListBox" Grid.Row="4" Grid.Column="1" />
+        <GroupBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="4" BorderThickness="0">
+            <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
+                <Image x:Name="image" />
+            </Border>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="히스토그램" BorderThickness="0">
+            <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
+                <Polygon Points="{Binding LuminanceHistogramPoints}" Stretch="Fill" Fill="Black" Opacity="0.8" />
+            </Border>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="2" Header="필터 리스트" BorderThickness="0">
+            <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
+                <ListBox x:Name="filterListBox" />
+            </Border>
+        </GroupBox>
     </Grid>
 </Window>
