@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleFilter2"
         mc:Ignorable="d"
-        Title="Simple Filter 2" Height="350" Width="600" Closing="Window_Closing">
+        Title="Simple Filter 2" Height="700" Width="1200" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,55 +17,121 @@
             <ColumnDefinition Width="150*" />
         </Grid.ColumnDefinitions>
         <Menu HorizontalAlignment="Left" VerticalAlignment="Top">
-            <MenuItem Header="파일">
+            <MenuItem x:Name="menu_file" Header="파일">
                 <MenuItem x:Name="FileOpen" Header="열기" Click="FileOpen_Click"></MenuItem>
                 <MenuItem x:Name="FileSave" Header="저장" IsEnabled="False"/>
                 <MenuItem x:Name="FileSaveAs" Header="다른 이름으로 저장" IsEnabled="False"></MenuItem>
                 <Separator HorizontalAlignment="Left" Width="190"/>
                 <MenuItem x:Name="ProgramEnd" Header="끝내기" Click="ProgramEnd_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Header="돌리기">
-                <MenuItem x:Name="rotate90" Header="우측으로 돌리기" Click="rotate90_Click"></MenuItem>
-                <MenuItem x:Name="rotate270" Header="좌측으로 돌리기" Click="rotate270_Click"></MenuItem>
-                <MenuItem x:Name="rotate180" Header="거꾸로 돌리기" Click="rotate180_Click"></MenuItem>
-                <Separator HorizontalAlignment="Left" Width="190"/>
-                <MenuItem x:Name="toFlipLR" Header="좌우대칭" Click="toFlipLR_Click"></MenuItem>
-                <MenuItem x:Name="toFlipUD" Header="상하대칭" Click="toFlipUD_Click"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="필터">
+            <MenuItem x:Name="menu_modi" Header="편집" IsEnabled="False">
                 <MenuItem x:Name="viewOriginal" Header="원본으로 되돌리기" Click="viewOriginal_Click"></MenuItem>
                 <Separator HorizontalAlignment="Left" Width="190"/>
-                <MenuItem x:Name="viewGray" Header="흑백영상 만들기" Click="viewGray_Click"></MenuItem>
-                <MenuItem x:Name="toSepia" Header="세피아"></MenuItem>
-                <MenuItem Header="블러">
-                    <MenuItem x:Name="toSobel" Header="Sobel"></MenuItem>
-                    <MenuItem x:Name="toLaplace" Header="Laplace"></MenuItem>
-                    <MenuItem x:Name="toMedian" Header="Median"></MenuItem>
-                    <MenuItem x:Name="toGaussian" Header="Gaussian"></MenuItem>
+                <MenuItem Header="색상모델 변환">
+                    <MenuItem x:Name="LUV" Header="BGR -> LUV" Click="LUV_Click"></MenuItem>
+                    <MenuItem x:Name="Lab" Header="BGR -> Lab" Click="Lab_Click"></MenuItem>
+                    <MenuItem x:Name="YCrCb" Header="BGR -> YCrCb" Click="YCrCb_Click"></MenuItem>
+                    <MenuItem x:Name="XYZ" Header="BGR -> XYZ" Click="XYZ_Click"></MenuItem>
+                    <MenuItem x:Name="HLS" Header="BGR -> HLS" Click="HLS_Click"></MenuItem>
+                    <MenuItem x:Name="HSV" Header="BGR -> HSV"></MenuItem>
+                    <Separator HorizontalAlignment="Left" Width="190"/>
+                    <MenuItem x:Name="LUVtoBGR" Header="LUV -> BGR" Click="LUVtoBGR_Click" ></MenuItem>
+                    <MenuItem x:Name="LabtoBGR" Header="Lab -> BGR" Click="LabtoBGR_Click" ></MenuItem>
+                    <MenuItem x:Name="YCrCbtoBGR" Header="YCrCb -> BGR" Click="YCrCbtoBGR_Click" ></MenuItem>
+                    <MenuItem x:Name="XYZtoBGR" Header="XYZ -> BGR" Click="XYZtoBGR_Click" ></MenuItem>
+                    <MenuItem x:Name="HLStoBGR" Header="HLS -> BGR" Click="HLStoBGR_Click" ></MenuItem>
+                    <MenuItem x:Name="HSVtoBGR" Header="HSV -> BGR" ></MenuItem>
                 </MenuItem>
                 <MenuItem Header="히스토그램 균등화">
                     <MenuItem x:Name="BgrEqualization" Header="색상에 대한 균등화" Click="BgrEqualization_Click"></MenuItem>
                     <MenuItem x:Name="YCrCbEqulization" Header="밝기에 대한 균등화" Click="YCrCbEqulization_Click" ></MenuItem>
-                    <MenuItem x:Name="AdaptiveBrightnessEqualization" Header="Adaptive Brightness Equalization" ></MenuItem>
-                    <MenuItem x:Name="AdaptiveBgrEqualization" Header="Adaptive BGR Equalization" ></MenuItem>
-                    <MenuItem x:Name="AdaptiveYCrCbEqualization" Header="Adaptive YCrCb Equalization" ></MenuItem>
-                    <MenuItem x:Name="AdaptiveSaturationEqualization" Header="Adaptive Saturation Equalization" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveLightnessEqualization" Header="Adaptive Lightness Equalization" Click="AdaptiveLightnessEqualization_Click" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveBgrEqualization" Header="Adaptive BGR Equalization" Click="AdaptiveBgrEqualization_Click" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveYCrCbEqualization" Header="Adaptive YCrCb Equalization" Click="AdaptiveYCrCbEqualization_Click" ></MenuItem>
+                    <MenuItem x:Name="AdaptiveSaturationEqualization" Header="Adaptive Saturation Equalization" Click="AdaptiveSaturationEqualization_Click" ></MenuItem>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem x:Name="menu_look" Header="보기" IsEnabled="False">
+                <MenuItem x:Name="viewImgScreenSize" Header="화면에 맞춰 보기" IsCheckable="True" Click="viewImgScreenSize_Click"/>
+                <MenuItem x:Name="viewOriginalSize" Header="100% 크기로 보기" Click="viewOriginalSize_Click" IsCheckable="True"/>
+                <MenuItem x:Name="viewImgWidthSize" Header="가로폭에 맞춰 보기" Click="viewImgWidthSize_Click" IsCheckable="True"></MenuItem>
+                <MenuItem x:Name="viewImgHeightSize" Header="세로폭에 맞춰 보기"  IsCheckable="True" Click="viewImgHeightSize_Click"></MenuItem>
+                <Separator HorizontalAlignment="Left" Width="190"/>
+                <MenuItem Header="돌리기">
+                    <MenuItem x:Name="rotate90" Header="우측으로 돌리기" Click="rotate90_Click"></MenuItem>
+                    <MenuItem x:Name="rotate270" Header="좌측으로 돌리기" Click="rotate270_Click"></MenuItem>
+                    <MenuItem x:Name="rotate180" Header="거꾸로 돌리기" Click="rotate180_Click"></MenuItem>
+                    <Separator HorizontalAlignment="Left" Width="190"/>
+                    <MenuItem x:Name="toFlipLR" Header="좌우대칭" Click="toFlipLR_Click"></MenuItem>
+                    <MenuItem x:Name="toFlipUD" Header="상하대칭" Click="toFlipUD_Click"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="특정 채널만 보기">
+                    <MenuItem Header="BGR">
+                        <MenuItem x:Name="BGR_B" Header="B 채널" Click="BGR_B_Click"></MenuItem>
+                        <MenuItem x:Name="BGR_G" Header="G 채널" Click="BGR_G_Click"></MenuItem>
+                        <MenuItem x:Name="BGR_R" Header="R 채널" Click="BGR_R_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="HLS" IsEnabled="False">
+                        <MenuItem x:Name="HLS_H" Header="H 채널"></MenuItem>
+                        <MenuItem x:Name="HLS_L" Header="L 채널"></MenuItem>
+                        <MenuItem x:Name="HLS_S" Header="S 채널"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="HSV">
+                        <MenuItem x:Name="HSV_H" Header="H 채널" Click="HSV_H_Click"></MenuItem>
+                        <MenuItem x:Name="HSV_S" Header="S 채널" Click="HSV_S_Click"></MenuItem>
+                        <MenuItem x:Name="HSV_V" Header="V 채널" Click="HSV_V_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Lab">
+                        <MenuItem x:Name="Lab_L" Header="L 채널" Click="Lab_L_Click"></MenuItem>
+                        <MenuItem x:Name="Lab_a" Header="a 채널" Click="Lab_a_Click"></MenuItem>
+                        <MenuItem x:Name="Lab_b" Header="b 채널" Click="Lab_b_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="LUV" IsEnabled="False">
+                        <MenuItem x:Name="LUV_L" Header="L 채널" Click="LUV_L_Click"></MenuItem>
+                        <MenuItem x:Name="LUV_U" Header="U 채널" Click="LUV_U_Click"></MenuItem>
+                        <MenuItem x:Name="LUV_V" Header="V 채널" Click="LUV_V_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="XYZ">
+                        <MenuItem x:Name="XYZ_X" Header="X 채널"></MenuItem>
+                        <MenuItem x:Name="XYZ_Y" Header="Y 채널"></MenuItem>
+                        <MenuItem x:Name="XYZ_Z" Header="Z 채널"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="YCrCb">
+                        <MenuItem x:Name="YCrCb_Y" Header="Y 채널" Click="YCrCb_Y_Click"></MenuItem>
+                        <MenuItem x:Name="YCrCb_Cr" Header="Cr 채널" Click="YCrCb_Cr_Click"></MenuItem>
+                        <MenuItem x:Name="YCrCb_Cb" Header="Cb 채널" Click="YCrCb_Cb_Click"></MenuItem>
+                    </MenuItem>
+                </MenuItem>
+            </MenuItem>
+            
+            <MenuItem x:Name="menu_filter" Header="필터" IsEnabled="False">
+                <MenuItem x:Name="viewGray" Header="흑백영상 만들기" Click="viewGray_Click"></MenuItem>
+                <MenuItem x:Name="Sepia" Header="세피아" Click="Sepia_Click"></MenuItem>
+                <MenuItem Header="블러">
+                    <MenuItem x:Name="Sobel" Header="Sobel"></MenuItem>
+                    <MenuItem x:Name="Laplace" Header="Laplace"></MenuItem>
+                    <MenuItem x:Name="Median" Header="Median"></MenuItem>
+                    <MenuItem x:Name="Gaussian" Header="Gaussian"></MenuItem>
                 </MenuItem>
             </MenuItem>
         </Menu>
         <GroupBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="4" BorderThickness="0">
             <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
-                <Image x:Name="image" />
+                <ScrollViewer x:Name="ImageScroll" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" >
+                    <Image x:Name="image" />
+                </ScrollViewer>
             </Border>
         </GroupBox>
+
         <GroupBox Grid.Column="1" Grid.Row="1" Header="히스토그램" BorderThickness="0">
             <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
                 <Polygon Points="{Binding LuminanceHistogramPoints}" Stretch="Fill" Fill="Black" Opacity="0.8" />
             </Border>
         </GroupBox>
-        <GroupBox Grid.Column="1" Grid.Row="2" Header="필터 리스트" BorderThickness="0">
+
+        <GroupBox x:Name="menu_panel_control" Grid.Column="1" Grid.Row="2" Header="옵션 조절" BorderThickness="0" Visibility="Hidden">
             <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
-                <ListBox x:Name="filterListBox" />
+                <Slider x:Name="controlValue"></Slider>
             </Border>
         </GroupBox>
     </Grid>

@@ -54,6 +54,14 @@ namespace SimpleFilter2
                 Mat img = CvInvoke.Imread(openFileDialog.FileName, Emgu.CV.CvEnum.LoadImageType.AnyColor);
                 OriginalMat = img;
                 CurrentMat = OriginalMat.Clone();
+                
+                menu_modi.IsEnabled = true;
+                menu_look.IsEnabled = true;
+                menu_filter.IsEnabled = true;
+                menu_panel_control.Visibility = Visibility.Visible;
+
+                manage_image_view_mode(1);
+
                 toOriginal();
             }
         }
@@ -181,7 +189,178 @@ namespace SimpleFilter2
 
         private void YCrCbEqulization_Click(object sender, RoutedEventArgs e)
         {
+            toYCrCbHistogramEqulization(CurrentMat);
+        }
 
+        private void LUV_Click(object sender, RoutedEventArgs e)
+        {
+            toColorModel(CurrentMat, 1);
+        }
+
+        private void Lab_Click(object sender, RoutedEventArgs e)
+        {
+            toColorModel(CurrentMat, 2);
+        }
+
+        private void YCrCb_Click(object sender, RoutedEventArgs e)
+        {
+            toColorModel(CurrentMat, 3);
+        }
+
+        private void XYZ_Click(object sender, RoutedEventArgs e)
+        {
+            toColorModel(CurrentMat, 4);
+        }
+
+        private void HLS_Click(object sender, RoutedEventArgs e)
+        {
+            toColorModel(CurrentMat, 5);
+        }
+
+        private void LUVtoBGR_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrModel(CurrentMat, 1);
+        }
+
+        private void LabtoBGR_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrModel(CurrentMat, 2);
+        }
+
+        private void YCrCbtoBGR_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrModel(CurrentMat, 3);
+        }
+
+        private void XYZtoBGR_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrModel(CurrentMat, 4);
+        }
+
+        private void HLStoBGR_Click(object sender, RoutedEventArgs e)
+        {
+            toBgrModel(CurrentMat, 5);
+        }
+
+
+        private void BGR_B_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 1);
+        }
+
+        private void BGR_G_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 2);
+        }
+
+        private void BGR_R_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 3);
+        }
+
+        private void LUV_L_Click(object sender, RoutedEventArgs e)
+        {
+            //toSplitColor(CurrentMat, 4);
+        }
+
+        private void LUV_U_Click(object sender, RoutedEventArgs e)
+        {
+            //toSplitColor(CurrentMat, 5);
+        }
+
+        private void LUV_V_Click(object sender, RoutedEventArgs e)
+        {
+            //toSplitColor(CurrentMat, 6);
+        }
+
+        private void Lab_L_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 7);
+        }
+
+        private void Lab_a_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 8);
+        }
+
+        private void Lab_b_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 9);
+        }
+
+        private void YCrCb_Y_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 10);
+        }
+
+        private void YCrCb_Cr_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 11);
+        }
+
+        private void YCrCb_Cb_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 12);
+        }
+
+        private void HSV_H_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 13);
+        }
+
+        private void HSV_S_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 14);
+        }
+
+        private void HSV_V_Click(object sender, RoutedEventArgs e)
+        {
+            toSplitColor(CurrentMat, 15);
+        }
+        
+        private void Sepia_Click(object sender, RoutedEventArgs e)
+        {
+            toSepia(OriginalMat);
+        }
+        
+        private void AdaptiveLightnessEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toAdaptiveLightnessEqualization(OriginalMat);
+        }
+
+        private void AdaptiveBgrEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toAdaptiveBgrEqualization(OriginalMat);
+        }
+
+        private void AdaptiveYCrCbEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toAdaptiveYCrCbEqualization(OriginalMat);
+        }
+
+        private void AdaptiveSaturationEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toAdaptiveSaturationEqualization(OriginalMat);
+        }
+              
+        private void viewImgScreenSize_Click(object sender, RoutedEventArgs e)
+        {
+            manage_image_view_mode(1);
+        }
+
+        private void viewOriginalSize_Click(object sender, RoutedEventArgs e)
+        {
+            manage_image_view_mode(2);
+        }
+
+        private void viewImgWidthSize_Click(object sender, RoutedEventArgs e)
+        {
+            manage_image_view_mode(3);
+        }
+
+        private void viewImgHeightSize_Click(object sender, RoutedEventArgs e)
+        {
+            manage_image_view_mode(4);
         }
     }
 }
