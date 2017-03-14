@@ -33,14 +33,7 @@
                     <MenuItem x:Name="YCrCb" Header="BGR -> YCrCb" Click="YCrCb_Click"></MenuItem>
                     <MenuItem x:Name="XYZ" Header="BGR -> XYZ" Click="XYZ_Click"></MenuItem>
                     <MenuItem x:Name="HLS" Header="BGR -> HLS" Click="HLS_Click"></MenuItem>
-                    <MenuItem x:Name="HSV" Header="BGR -> HSV"></MenuItem>
-                    <Separator HorizontalAlignment="Left" Width="190"/>
-                    <MenuItem x:Name="LUVtoBGR" Header="LUV -> BGR" Click="LUVtoBGR_Click" ></MenuItem>
-                    <MenuItem x:Name="LabtoBGR" Header="Lab -> BGR" Click="LabtoBGR_Click" ></MenuItem>
-                    <MenuItem x:Name="YCrCbtoBGR" Header="YCrCb -> BGR" Click="YCrCbtoBGR_Click" ></MenuItem>
-                    <MenuItem x:Name="XYZtoBGR" Header="XYZ -> BGR" Click="XYZtoBGR_Click" ></MenuItem>
-                    <MenuItem x:Name="HLStoBGR" Header="HLS -> BGR" Click="HLStoBGR_Click" ></MenuItem>
-                    <MenuItem x:Name="HSVtoBGR" Header="HSV -> BGR" ></MenuItem>
+                    <MenuItem x:Name="HSV" Header="BGR -> HSV" Click="HSV_Click"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="히스토그램 균등화">
                     <MenuItem x:Name="BgrEqualization" Header="색상에 대한 균등화" Click="BgrEqualization_Click"></MenuItem>
@@ -103,11 +96,11 @@
                     </MenuItem>
                 </MenuItem>
             </MenuItem>
-            
+
             <MenuItem x:Name="menu_filter" Header="필터" IsEnabled="False">
                 <MenuItem x:Name="viewGray" Header="흑백영상 만들기" Click="viewGray_Click"></MenuItem>
                 <MenuItem x:Name="Sepia" Header="세피아" Click="Sepia_Click"></MenuItem>
-                <MenuItem Header="블러">
+                <MenuItem Header="블러" IsEnabled="False">
                     <MenuItem x:Name="Sobel" Header="Sobel"></MenuItem>
                     <MenuItem x:Name="Laplace" Header="Laplace"></MenuItem>
                     <MenuItem x:Name="Median" Header="Median"></MenuItem>
@@ -131,7 +124,38 @@
 
         <GroupBox x:Name="menu_panel_control" Grid.Column="1" Grid.Row="2" Header="옵션 조절" BorderThickness="0" Visibility="Hidden">
             <Border BorderThickness="1" BorderBrush="Black" Background="White" Margin="4">
-                <Slider x:Name="controlValue"></Slider>
+                <StackPanel Orientation="Vertical">
+                    <Label x:Name="min0c" Content="B 최저값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox Text="{Binding ElementName=min0Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="min0Cha" Value="0" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="min0Channel" ></Slider>
+                    </DockPanel>
+                    <Label x:Name="max0c" Content="B 최고값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox Text="{Binding ElementName=max0Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="max0Cha" Value="255" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="max0Channel" ></Slider>
+                    </DockPanel>
+                    <Label x:Name="min1c" Content="G 최저값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox Text="{Binding ElementName=min1Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="min1Cha" Value="0" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="min1Channel" ></Slider>
+                    </DockPanel>
+                    <Label x:Name="max1c" Content="G 최고값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox Text="{Binding ElementName=max1Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="max1Cha" Value="255" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="max1Channel" ></Slider>
+                    </DockPanel>
+                    <Label x:Name="min2c" Content="R 최저값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox Text="{Binding ElementName=min2Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="min2Cha" Value="0" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="min2Channel"   ></Slider>
+                    </DockPanel>
+                    <Label x:Name="max2c" Content="R 최고값"></Label>
+                    <DockPanel VerticalAlignment="Center" Margin="10">
+                        <TextBox  Text="{Binding ElementName=max2Cha, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Left" Width="30" DockPanel.Dock="Right"/>
+                        <Slider Name="max2Cha" Value="255" Minimum="0" Maximum="255" TickFrequency="1" IsSnapToTickEnabled="True" PreviewMouseUp="ColorSlider_ValueChanged" ValueChanged="max2Channel"  ></Slider>
+                    </DockPanel>
+                </StackPanel>
             </Border>
         </GroupBox>
     </Grid>

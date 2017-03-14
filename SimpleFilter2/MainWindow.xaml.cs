@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using AForge.Imaging;
+using Emgu.CV.Util;
 
 namespace SimpleFilter2
 {
@@ -40,7 +41,7 @@ namespace SimpleFilter2
             InitializeComponent();
             this.DataContext = this;
         }
-
+        
         private void FileOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -54,18 +55,103 @@ namespace SimpleFilter2
                 Mat img = CvInvoke.Imread(openFileDialog.FileName, Emgu.CV.CvEnum.LoadImageType.AnyColor);
                 OriginalMat = img;
                 CurrentMat = OriginalMat.Clone();
-                
+
                 menu_modi.IsEnabled = true;
                 menu_look.IsEnabled = true;
                 menu_filter.IsEnabled = true;
                 menu_panel_control.Visibility = Visibility.Visible;
 
                 manage_image_view_mode(1);
-
+                
                 toOriginal();
             }
         }
 
+        private void init(int order)
+        {
+            switch(order)
+            {
+                case Constants.BGR:
+                    min0c.Content = "B 최저값";
+                    max0c.Content = "B 최고값";
+                    min1c.Content = "G 최저값";
+                    max1c.Content = "G 최고값";
+                    min2c.Content = "R 최저값";
+                    max2c.Content = "R 최고값";
+                    break;
+                case Constants.Luv:       
+                    min0c.Content = "L 최저값";
+                    max0c.Content = "L 최고값";
+                    min1c.Content = "u 최저값";
+                    max1c.Content = "u 최고값";
+                    min2c.Content = "v 최저값";
+                    max2c.Content = "v 최고값";
+                    break;
+                case Constants.HSV:
+                    min0c.Content = "H 최저값";
+                    max0c.Content = "H 최고값";
+                    min1c.Content = "S 최저값";
+                    max1c.Content = "S 최고값";
+                    min2c.Content = "V 최저값";
+                    max2c.Content = "V 최고값";
+                    break;
+                case Constants.YCrCb:
+                    min0c.Content = "Y 최저값";
+                    max0c.Content = "Y 최고값";
+                    min1c.Content = "Cr 최저값";
+                    max1c.Content = "Cr 최고값";
+                    min2c.Content = "Cb 최저값";
+                    max2c.Content = "Cb 최고값";
+                    break;
+                case Constants.XYZ:
+                    min0c.Content = "X 최저값";
+                    max0c.Content = "X 최고값";
+                    min1c.Content = "Y 최저값";
+                    max1c.Content = "Y 최고값";
+                    min2c.Content = "Z 최저값";
+                    max2c.Content = "Z 최고값";
+                    break;
+                case Constants.HLS:
+                    min0c.Content = "H 최저값";
+                    max0c.Content = "H 최고값";
+                    min1c.Content = "L 최저값";
+                    max1c.Content = "L 최고값";
+                    min2c.Content = "S 최저값";
+                    max2c.Content = "S 최고값";
+                    break;
+                case Constants.Lab:
+                    min0c.Content = "L 최저값";
+                    max0c.Content = "L 최고값";
+                    min1c.Content = "a 최저값";
+                    max1c.Content = "a 최고값";
+                    min2c.Content = "b 최저값";
+                    max2c.Content = "b 최고값";
+                    break;
+            }
+
+            min0Cha.Minimum = 0;
+            min0Cha.Maximum = 255;
+            min0Cha.Value = 0;
+            max0Cha.Minimum = 0;
+            max0Cha.Maximum = 255;
+            max0Cha.Value = 255;
+
+            min1Cha.Minimum = 0;
+            min1Cha.Maximum = 255;
+            min1Cha.Value = 0;
+            max1Cha.Minimum = 0;
+            max1Cha.Maximum = 255;
+            max1Cha.Value = 255;
+
+            min2Cha.Minimum = 0;
+            min2Cha.Maximum = 255;
+            min2Cha.Value = 0;
+            max2Cha.Minimum = 0;
+            max2Cha.Maximum = 255;
+            max2Cha.Value = 255;
+        }
+
+        #region 히스토그램
         internal void drawHistogram(Mat img)
         {
             using (System.Drawing.Bitmap bmp = img.Bitmap)
@@ -121,6 +207,7 @@ namespace SimpleFilter2
 
             return points;
         }
+        #endregion
 
         private void viewOriginal_Click(object sender, RoutedEventArgs e)
         {
@@ -182,80 +269,95 @@ namespace SimpleFilter2
             }
         }
 
+        #region 히스토그램 균등화
         private void BgrEqualization_Click(object sender, RoutedEventArgs e)
         {
-            toBgrHistogramEqulization(CurrentMat);
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toBgrHistogramEqulization(OriginalMat);
         }
 
         private void YCrCbEqulization_Click(object sender, RoutedEventArgs e)
         {
-            toYCrCbHistogramEqulization(CurrentMat);
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toYCrCbHistogramEqulization(OriginalMat);
         }
 
+        private void AdaptiveLightnessEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toAdaptiveLightnessEqualization(OriginalMat);
+        }
+
+        private void AdaptiveBgrEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toAdaptiveBgrEqualization(OriginalMat);
+        }
+
+        private void AdaptiveYCrCbEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toAdaptiveYCrCbEqualization(OriginalMat);
+        }
+
+        private void AdaptiveSaturationEqualization_Click(object sender, RoutedEventArgs e)
+        {
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
+            toAdaptiveSaturationEqualization(OriginalMat);
+        }
+
+        #endregion
+
+        #region 색상모델 변경
         private void LUV_Click(object sender, RoutedEventArgs e)
         {
-            toColorModel(CurrentMat, 1);
+            toColorModel(OriginalMat, Constants.Luv);
         }
 
         private void Lab_Click(object sender, RoutedEventArgs e)
         {
-            toColorModel(CurrentMat, 2);
+            toColorModel(OriginalMat, Constants.Lab);
         }
 
         private void YCrCb_Click(object sender, RoutedEventArgs e)
         {
-            toColorModel(CurrentMat, 3);
+            toColorModel(OriginalMat, Constants.YCrCb);
         }
 
         private void XYZ_Click(object sender, RoutedEventArgs e)
         {
-            toColorModel(CurrentMat, 4);
+            toColorModel(OriginalMat, Constants.XYZ);
         }
 
         private void HLS_Click(object sender, RoutedEventArgs e)
         {
-            toColorModel(CurrentMat, 5);
+            toColorModel(OriginalMat, Constants.HLS);
         }
 
-        private void LUVtoBGR_Click(object sender, RoutedEventArgs e)
+        private void HSV_Click(object sender, RoutedEventArgs e)
         {
-            toBgrModel(CurrentMat, 1);
+            toColorModel(OriginalMat, Constants.HSV);
         }
-
-        private void LabtoBGR_Click(object sender, RoutedEventArgs e)
-        {
-            toBgrModel(CurrentMat, 2);
-        }
-
-        private void YCrCbtoBGR_Click(object sender, RoutedEventArgs e)
-        {
-            toBgrModel(CurrentMat, 3);
-        }
-
-        private void XYZtoBGR_Click(object sender, RoutedEventArgs e)
-        {
-            toBgrModel(CurrentMat, 4);
-        }
-
-        private void HLStoBGR_Click(object sender, RoutedEventArgs e)
-        {
-            toBgrModel(CurrentMat, 5);
-        }
-
 
         private void BGR_B_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 1);
+            toSplitColor(OriginalMat, 1);
         }
 
         private void BGR_G_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 2);
+            toSplitColor(OriginalMat, 2);
         }
 
         private void BGR_R_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 3);
+            toSplitColor(OriginalMat, 3);
         }
 
         private void LUV_L_Click(object sender, RoutedEventArgs e)
@@ -275,74 +377,59 @@ namespace SimpleFilter2
 
         private void Lab_L_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 7);
+            toSplitColor(OriginalMat, 7);
         }
 
         private void Lab_a_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 8);
+            toSplitColor(OriginalMat, 8);
         }
 
         private void Lab_b_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 9);
+            toSplitColor(OriginalMat, 9);
         }
 
         private void YCrCb_Y_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 10);
+            toSplitColor(OriginalMat, 10);
         }
 
         private void YCrCb_Cr_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 11);
+            toSplitColor(OriginalMat, 11);
         }
 
         private void YCrCb_Cb_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 12);
+            toSplitColor(OriginalMat, 12);
         }
 
         private void HSV_H_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 13);
+            toSplitColor(OriginalMat, 13);
         }
 
         private void HSV_S_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 14);
+            toSplitColor(OriginalMat, 14);
         }
 
         private void HSV_V_Click(object sender, RoutedEventArgs e)
         {
-            toSplitColor(CurrentMat, 15);
+            toSplitColor(OriginalMat, 15);
         }
-        
+
+        #endregion
+
         private void Sepia_Click(object sender, RoutedEventArgs e)
         {
+            toOriginal();
+            menu_panel_control.Visibility = Visibility.Hidden;
             toSepia(OriginalMat);
         }
-        
-        private void AdaptiveLightnessEqualization_Click(object sender, RoutedEventArgs e)
-        {
-            toAdaptiveLightnessEqualization(OriginalMat);
-        }
 
-        private void AdaptiveBgrEqualization_Click(object sender, RoutedEventArgs e)
-        {
-            toAdaptiveBgrEqualization(OriginalMat);
-        }
-
-        private void AdaptiveYCrCbEqualization_Click(object sender, RoutedEventArgs e)
-        {
-            toAdaptiveYCrCbEqualization(OriginalMat);
-        }
-
-        private void AdaptiveSaturationEqualization_Click(object sender, RoutedEventArgs e)
-        {
-            toAdaptiveSaturationEqualization(OriginalMat);
-        }
-              
+        #region 이미지 보기 방법      
         private void viewImgScreenSize_Click(object sender, RoutedEventArgs e)
         {
             manage_image_view_mode(1);
@@ -362,5 +449,91 @@ namespace SimpleFilter2
         {
             manage_image_view_mode(4);
         }
+
+        #endregion
+        
+
+        private void ColorSlider_ValueChanged(object sender, MouseButtonEventArgs e)
+        {
+            //var obj = sender as Slider;
+            //System.Diagnostics.Debug.WriteLine("==============" + obj.Name);
+            toColorModel(OriginalMat, Constants.colorMode);
+        }
+
+        #region 채널 색상 조절바 제한
+        private void min0Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimumB = min0Cha.Value;
+            double maximumB = max0Cha.Value;
+
+            if (minimumB > maximumB)
+            {
+                minimumB = maximumB;
+                min0Cha.Value = maximumB;
+            }
+        }
+
+        private void max0Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimumB = min0Cha.Value;
+            double maximumB = max0Cha.Value;
+
+            if (maximumB < minimumB)
+            {
+                maximumB = minimumB;
+                max0Cha.Value = minimumB;
+            }
+        }
+
+        private void min1Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimumG = min1Cha.Value;
+            double maximumG = max1Cha.Value;
+
+            if (minimumG > maximumG)
+            {
+                minimumG = maximumG;
+                min1Cha.Value = maximumG;
+            }
+        }
+
+        private void max1Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimumG = min1Cha.Value;
+            double maximumG = max1Cha.Value;
+
+            if (maximumG < minimumG)
+            {
+                maximumG = minimumG;
+                max1Cha.Value = minimumG;
+            }
+        }
+
+        private void min2Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimumR = min2Cha.Value;
+            double maximumR = max2Cha.Value;
+
+            if (minimumR > maximumR)
+            {
+                minimumR = maximumR;
+                min2Cha.Value = maximumR;
+            }
+        }
+
+        private void max2Channel(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double minimum2Channel = min2Cha.Value;
+            double maximum2Channel = max2Cha.Value;
+
+            if (maximum2Channel < minimum2Channel)
+            {
+                maximum2Channel = minimum2Channel;
+                max2Cha.Value = minimum2Channel;
+            }
+        }
+        #endregion
+
+        
     }
 }
