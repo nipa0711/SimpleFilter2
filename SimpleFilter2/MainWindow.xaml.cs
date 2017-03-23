@@ -21,7 +21,6 @@ using Emgu.CV.UI;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
-using AForge.Imaging;
 using Emgu.CV.Util;
 
 namespace SimpleFilter2
@@ -29,10 +28,8 @@ namespace SimpleFilter2
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private System.Windows.Media.PointCollection GrayHistogramPoints = null;
         Mat OriginalMat = null;
         Mat CurrentMat = null;
 
@@ -55,15 +52,19 @@ namespace SimpleFilter2
                 Mat img = CvInvoke.Imread(openFileDialog.FileName, Emgu.CV.CvEnum.LoadImageType.AnyColor);
                 OriginalMat = img;
                 CurrentMat = OriginalMat.Clone();
+                Constants.fileAddr = openFileDialog.FileName;
 
                 menu_modi.IsEnabled = true;
                 menu_look.IsEnabled = true;
                 menu_filter.IsEnabled = true;
                 menu_panel_control.Visibility = Visibility.Visible;
+                FileSaveAs.IsEnabled = true;
+                FileSave.IsEnabled = true;
 
                 manage_image_view_mode(1);
                 
                 toOriginal();
+                //draw(OriginalMat);
             }
         }
 
@@ -151,63 +152,55 @@ namespace SimpleFilter2
             max2Cha.Value = 255;
         }
 
-        #region 히스토그램
-        internal void drawHistogram(Mat img)
+        private void drawHistogram(Mat img)
         {
-            using (System.Drawing.Bitmap bmp = img.Bitmap)
-            {
-                ImageStatistics Statistics = new ImageStatistics(bmp);
+            Mat store = img.Clone();
+            Image<Gray, Byte> gray = store.ToImage<Gray, Byte>();
 
-                if (Statistics.IsGrayscale == true) // 회색이라면
+            Mat histImage = img.Clone();
+
+            //if (img.NumberOfChannels >= 3)
+            //{
+            //    //CvInvoke.CvtColor(img, grayImg, ColorConversion.Bgr2Gray);
+            //    gray = store.ToImage<Gray, Byte>();
+            //}
+            //else
+            //{
+            //    gray = store.ToImage<Gray, Byte>();
+            //}
+
+            DenseHistogram histo = new DenseHistogram(256, new RangeF(0.0f, 255.0f));
+            histo.Calculate<Byte>(new Image<Gray, byte>[] { gray }, false, null);
+
+            CvInvoke.Normalize(histo, histo, 1, 0, NormType.MinMax, DepthType.Cv32F);
+
+            float[] grayHist = histo.GetBinValues();
+
+            Mat hist = new Mat(200, 256, DepthType.Cv8U, 1);
+            hist.SetTo(new MCvScalar(255)); // 기본 흰색
+
+            for (int i = 0; i < 256; i++)
+            {
+                grayHist[i] = (int)(grayHist[i] * 200);
+            }
+
+            for (int i = 2; i < 255 - 2; ++i)
+            {
+                grayHist[i] = (grayHist[i - 2] + grayHist[i - 1] + grayHist[i] + grayHist[i + 1] + grayHist[i + 2]) / 5;
+            }
+
+            for (int i = 0; i < 256; i++)
+            {
+                int hist_height = (int)(hist.Rows - grayHist[i]);
+                CvInvoke.Rectangle(hist, new System.Drawing.Rectangle(i, hist_height, 1, hist.Rows - hist_height), new MCvScalar(0), -1, LineType.EightConnected, 0);
+                
+                if (i>0 && i<255)
                 {
-                    this.LuminanceHistogramPoints = ConvertToPointCollection(Statistics.Gray.Values);
-                }
-                else
-                {
-                    // Luminance
-                    ImageStatisticsHSL LStatistics = new ImageStatisticsHSL(bmp);
-                    this.LuminanceHistogramPoints = ConvertToPointCollection(LStatistics.Luminance.Values);
+                    CvInvoke.Line(hist, new System.Drawing.Point(i, hist_height), new System.Drawing.Point(i+1, (int)(hist.Rows - grayHist[i+1])), new MCvScalar(0), 1, LineType.AntiAlias, 0);
                 }
             }
+            showHistogram.Source = BitmapSourceConvert.ToBitmapSource(hist);
         }
-
-        public System.Windows.Media.PointCollection LuminanceHistogramPoints
-        {
-            get
-            {
-                return this.GrayHistogramPoints;
-            }
-            set
-            {
-                if (this.GrayHistogramPoints != value)
-                {
-                    this.GrayHistogramPoints = value;
-                    if (this.PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("LuminanceHistogramPoints"));
-                    }
-                }
-            }
-        }
-
-        internal System.Windows.Media.PointCollection ConvertToPointCollection(int[] values)
-        {
-            int max = values.Max();
-
-            System.Windows.Media.PointCollection points = new System.Windows.Media.PointCollection();
-            // first point (lower-left corner)
-            points.Add(new Point(0, max));
-            // middle points
-            for (int i = 0; i < values.Length; i++)
-            {
-                points.Add(new Point(i, max - values[i]));
-            }
-            // last point (lower-right corner)
-            points.Add(new Point(values.Length - 1, max));
-
-            return points;
-        }
-        #endregion
 
         private void viewOriginal_Click(object sender, RoutedEventArgs e)
         {
@@ -532,8 +525,45 @@ namespace SimpleFilter2
                 max2Cha.Value = minimum2Channel;
             }
         }
+
         #endregion
 
+        private void FileSaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Jpeg file (*.jpg)|*.jpg|PNG file (*.png)|*.png|BMP file (*.bmp)|*.bmp";
+            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                CvInvoke.Imwrite(saveFileDialog.FileName, CurrentMat);
+            }
+        }
+
+        private void FileSave_Click(object sender, RoutedEventArgs e)
+        {
+            CvInvoke.Imwrite(Constants.fileAddr, CurrentMat);
+        }
         
+        private void blurLimit_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            int kSize = (int)blurLimit.Value;
+            manageBlur(OriginalMat, Constants.blurMode, kSize);
+        }
+
+        private void Sobel_Click(object sender, RoutedEventArgs e)
+        {
+            menu_panel_control.Visibility = Visibility.Collapsed;
+            menu_panel_blurControl.Visibility = Visibility.Visible;
+            Constants.blurMode = Constants.Sobel;
+            manageBlur(OriginalMat, Constants.blurMode);
+        }
+
+        private void Laplace_Click(object sender, RoutedEventArgs e)
+        {
+            menu_panel_control.Visibility = Visibility.Collapsed;
+            menu_panel_blurControl.Visibility = Visibility.Visible;
+            Constants.blurMode = Constants.Laplace;
+            manageBlur(OriginalMat, Constants.blurMode);
+        }
     }
 }

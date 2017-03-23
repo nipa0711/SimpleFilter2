@@ -32,6 +32,7 @@ namespace SimpleFilter2
             Constants.colorMode = Constants.BGR;
             init(Constants.BGR);
             menu_panel_control.Visibility = Visibility.Visible;
+            menu_panel_blurControl.Visibility = Visibility.Collapsed;
             showImg(OriginalMat);
         }
 
@@ -795,6 +796,49 @@ namespace SimpleFilter2
                     }
             }
 
+            showImg(CurrentMat);
+        }
+
+        private void manageBlur(Mat img, int blurMode, int kSize=3)
+        {
+            Mat store = img.Clone();
+            Image<Gray, Byte> gray = store.ToImage<Gray, Byte>();
+
+            switch (blurMode)
+            {
+                case Constants.Sobel:
+                    {
+                        Image<Gray, float> sobelX = gray.Sobel(1, 0, kSize);
+                        Image<Gray, float> sobelY = gray.Sobel(0, 1, kSize);
+
+                        sobelX = sobelX.AbsDiff(new Gray(0));
+                        sobelY = sobelY.AbsDiff(new Gray(0));
+
+                        Image<Gray, float> sobel = sobelX + sobelY;
+
+                        double[] mins, maxs;
+                        //Find sobel min or max value position
+                        System.Drawing.Point[] minLoc, maxLoc;
+                        sobel.MinMax(out mins, out maxs, out minLoc, out maxLoc);
+                        //Conversion to 8-bit image
+                        Image<Gray, Byte> sobelImage = sobel.ConvertScale<byte>(255 / maxs[0], 0);
+                        CurrentMat = sobelImage.Mat;
+                        break;
+                    }
+                    
+                case Constants.Laplace:
+                    {
+                        Image<Gray, float> targetImage = gray.Laplace(kSize);
+                        CvInvoke.ConvertScaleAbs(targetImage, targetImage, 1, 0);
+
+                        CurrentMat = targetImage.Mat;
+                        break;
+                    }
+                case Constants.Median:
+                    break;
+                case Constants.Gaussian:
+                    break;
+            }
             showImg(CurrentMat);
         }
 
